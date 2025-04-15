@@ -1,7 +1,7 @@
 import FileInput from "@/components/FileInput";
 import FormSubmit from "@/components/FormSubmit";
 import TextInput from "@/components/TextInput";
-import Video from "@/domain/Video";
+import VideoForm from "@/domain/VideoForm";
 import Head from "next/head";
 import { videoService } from "../_app";
 import { useRouter } from "next/router";
@@ -19,7 +19,7 @@ export default function Upload() {
       ).value;
       const fileInput = form.elements.namedItem("content") as HTMLInputElement;
       const file = fileInput.files?.[0] as File;
-      const video = new Video(name, description, file);
+      const video = new VideoForm(name, description, file);
       await videoService.upload(video);
       router.back();
     } catch (error) {

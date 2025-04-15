@@ -3,12 +3,12 @@ import { useRouter } from "next/router";
 import PrimaryButton from "@/components/PrimayButton";
 import { videoService } from "./_app";
 import { useEffect, useState } from "react";
-import Video from "@/domain/Video";
+import VideoList from "@/domain/VideoList";
 
 export default function Home() {
   const router = useRouter();
 
-  const [videos, setVideos] = useState<Video[]>([]);
+  const [videos, setVideos] = useState<VideoList[]>([]);
   useEffect(() => {
     async function fetchVideos() {
       const videosData = await videoService.list();
@@ -18,9 +18,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div
-      className={` grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
-    >
+    <div className="min-h-screen p-4 pb-20 font-[family-name:var(--font-geist-sans)]">
       <Head>
         <title>Vídeo Viewer</title>
       </Head>
@@ -41,7 +39,19 @@ export default function Home() {
           />
         </div>
       </header>
-      <main className="flex flex-col gap-[32px] sm:flex-row sm:gap-[32px] items-center justify-center w-full max-w-4xl">
+      <main className="grid gap-6 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full max-w-7xl mx-auto">
+        {videos.length === 0 && (
+          <div className="flex flex-col gap-2 items-center sm:items-start rounded-lg border border-gray-300 w-64 h-72 p-4">
+            <h2 className="text-xl font-bold">Nenhum vídeo encontrado</h2>
+            <p className="text-gray-600">
+              Não encontramos nenhum vídeo. Que tal enviar um?
+            </p>
+            <PrimaryButton
+              text="Enviar um vídeo"
+              onClick={() => router.push("/upload")}
+            />
+          </div>
+        )}
         {videos.map((video) => {
           return (
             <div
@@ -52,11 +62,11 @@ export default function Home() {
               <p className="text-gray-600">{video.description}</p>
               <PrimaryButton
                 text="Assistir"
-                // onClick={() => router.push(`/watch/${video.id}`)}
+                onClick={() => router.push(`/watch/${video.id}`)}
               />
             </div>
           );
-        }) ?? <span className="text-gray-600">Nenhum vídeo encontrado</span>}
+        })}
       </main>
     </div>
   );

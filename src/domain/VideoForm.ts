@@ -1,4 +1,4 @@
-export default class Video {
+export default class VideoForm {
     constructor(readonly name: string, readonly description: string, readonly content?: File) { }
 
     async getContent(): Promise<string> {

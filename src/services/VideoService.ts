@@ -1,11 +1,13 @@
-import Video from "@/domain/Video";
+import VideoForm from "@/domain/VideoForm";
+import VideoList from "@/domain/VideoList";
+import VideoView from "@/domain/VideoView";
 
 export default class VideoService {
 
     constructor(private readonly api: string) {
     }
 
-    async upload(video: Video): Promise<void> {
+    async upload(video: VideoForm): Promise<void> {
         await fetch(`${this.api}/videos/upload`, {
             method: "POST",
             headers: {
@@ -19,14 +21,34 @@ export default class VideoService {
         });
     }
 
-    async list(): Promise<Video[]> {
+    async list(): Promise<VideoList[]> {
         const response = await fetch(`${this.api}/videos/list`);
         if (!response.ok) {
             throw new Error("Failed to fetch videos");
         }
         const videosData = await response.json();
-        return videosData.map((videoData: { title: string, description: string }) => {
-            return new Video(videoData.title, videoData.description);
+        return videosData.map((videoData: { id: string, title: string, description: string }) => {
+            return new VideoList(videoData.id, videoData.title, videoData.description);
         });
+    }
+
+    async getVideo(id: string): Promise<VideoView> {
+        const response = await fetch(`${this.api}/videos/${id}`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch video");
+        }
+        const videoData = await response.json();
+        return new VideoView(
+            videoData.id,
+            videoData.title,
+            videoData.description,
+            videoData.thumbnail,
+            videoData.videoUrl,
+            videoData.duration,
+            videoData.uploadDate,
+            videoData.views,
+            videoData.likes,
+            videoData.dislikes,
+        );
     }
 }
