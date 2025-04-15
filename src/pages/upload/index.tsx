@@ -1,8 +1,13 @@
+import FileInput from "@/components/FileInput";
 import FormSubmit from "@/components/FormSubmit";
 import TextInput from "@/components/TextInput";
 import Head from "next/head";
 
 export default function Upload() {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+  };
+
   return (
     <div className="flex flex-col gap-8 px-8 md:px-16 pt-8 md:pt-16 w-full max-w-4xl mx-auto text-gray-900 dark:text-gray-100">
       <Head>
@@ -16,7 +21,7 @@ export default function Upload() {
         será exibido na página de visualização.
       </p>
 
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
         <fieldset className="border border-gray-200 dark:border-gray-600 rounded-lg p-6">
           <legend className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-4">
             Geral
@@ -33,6 +38,14 @@ export default function Upload() {
             label="Descrição"
             placeholder="Descrição do vídeo"
             required={true}
+          />
+          <div className="h-4" />
+          <FileInput
+            name="content"
+            label="Vídeo"
+            placeholder="Selecione um vídeo"
+            required={true}
+            accept="video/*"
           />
           <div className="h-4" />
           <FormSubmit />
