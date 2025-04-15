@@ -12,7 +12,7 @@ export default class VideoService {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                name: video.name,
+                title: video.name,
                 description: video.description,
                 content: await video.getContent(),
             }),
