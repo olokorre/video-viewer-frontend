@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { videoService } from "../_app";
+import SecondaryButton from "@/components/SecondaryButton";
 
 export default function WatchPage() {
   const router = useRouter();
@@ -64,15 +65,15 @@ export default function WatchPage() {
                   <h2 className="text-2xl font-bold mb-2">{video.title}</h2>
                   <p className="text-gray-700 mb-4">{video.description}</p>
                   <div className="flex items-center gap-4">
-                    <button className="flex items-center gap-1 text-gray-600 hover:text-gray-800">
+                    <SecondaryButton text="Like" icon="👍" />
+                    {/* <button className="flex items-center gap-1 text-gray-600 hover:text-gray-800">
                       <span>👍</span>
                       <span>Curtir</span>
                     </button>
                     <button className="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                      {/* Replace with an actual share icon */}
                       <span>🔗</span>
                       <span>Compartilhar</span>
-                    </button>
+                    </button> */}
                   </div>
                 </div>
               </>
