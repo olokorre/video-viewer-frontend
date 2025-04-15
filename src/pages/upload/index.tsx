@@ -1,11 +1,31 @@
 import FileInput from "@/components/FileInput";
 import FormSubmit from "@/components/FormSubmit";
 import TextInput from "@/components/TextInput";
+import Video from "@/domain/Video";
 import Head from "next/head";
+import { videoService } from "../_app";
+import { useRouter } from "next/router";
 
 export default function Upload() {
+  const router = useRouter();
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    try {
+      const form = event.currentTarget;
+      const name = (form.elements.namedItem("name") as HTMLInputElement).value;
+      const description = (
+        form.elements.namedItem("description") as HTMLInputElement
+      ).value;
+      const fileInput = form.elements.namedItem("content") as HTMLInputElement;
+      const file = fileInput.files?.[0] as File;
+      const video = new Video(name, description, file);
+      await videoService.upload(video);
+      router.back();
+    } catch (error) {
+      console.error("Error uploading video:", error);
+      alert("Erro ao enviar o vídeo. Tente novamente.");
+    }
   };
 
   return (
