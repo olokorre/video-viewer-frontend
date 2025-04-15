@@ -65,7 +65,7 @@ export default function Upload() {
             label="Vídeo"
             placeholder="Selecione um vídeo"
             required={true}
-            accept="video/*"
+            accept="video/mov,mp4,m4a,3gp,3g2,mj2"
           />
           <div className="h-4" />
           <FormSubmit />

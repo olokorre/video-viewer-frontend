@@ -65,15 +65,8 @@ export default function WatchPage() {
                   <h2 className="text-2xl font-bold mb-2">{video.title}</h2>
                   <p className="text-gray-700 mb-4">{video.description}</p>
                   <div className="flex items-center gap-4">
-                    <SecondaryButton text="Like" icon="👍" />
-                    {/* <button className="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                      <span>👍</span>
-                      <span>Curtir</span>
-                    </button>
-                    <button className="flex items-center gap-1 text-gray-600 hover:text-gray-800">
-                      <span>🔗</span>
-                      <span>Compartilhar</span>
-                    </button> */}
+                    <PrimaryButton text="Like" icon="👍" />
+                    <SecondaryButton text="Dislike" icon="👎" />
                   </div>
                 </div>
               </>

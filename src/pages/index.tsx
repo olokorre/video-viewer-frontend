@@ -4,6 +4,8 @@ import PrimaryButton from "@/components/PrimayButton";
 import { videoService } from "./_app";
 import { useEffect, useState } from "react";
 import VideoList from "@/domain/VideoList";
+import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   const router = useRouter();
@@ -24,7 +26,6 @@ export default function Home() {
       </Head>
       <header className="w-full flex flex-col sm:flex-row justify-between items-center p-4 border-b">
         <div className="flex items-center gap-4">
-          {/* <img src="/logo.png" alt="Logo" className="w-10 h-10" /> */}
           <h1 className="text-2xl font-bold">Vídeo Viewer</h1>
         </div>
         <div className="flex items-center gap-4">
@@ -54,17 +55,24 @@ export default function Home() {
         )}
         {videos.map((video) => {
           return (
-            <div
-              key={video.name}
-              className="flex flex-col gap-2 items-center sm:items-start rounded-lg border border-gray-300 w-64 h-72 p-4"
-            >
-              <h2 className="text-xl font-bold">{video.name}</h2>
-              <p className="text-gray-600">{video.description}</p>
-              <PrimaryButton
-                text="Assistir"
-                onClick={() => router.push(`/watch/${video.id}`)}
-              />
-            </div>
+            <Link href={`/watch/${video.id}`} key={video.id}>
+              <div className="flex flex-col gap-2 items-center sm:items-start rounded-lg border border-gray-300 w-64 h-72 p-4">
+                <div className="w-full aspect-video relative rounded-lg overflow-hidden">
+                  <Image
+                    src={video.thumbnail}
+                    alt={video.name}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <h2 className="text-xl font-bold">{video.name}</h2>
+                <p className="text-gray-600">{video.description}</p>
+                <PrimaryButton
+                  text="Assistir"
+                  onClick={() => router.push(`/watch/${video.id}`)}
+                />
+              </div>
+            </Link>
           );
         })}
       </main>

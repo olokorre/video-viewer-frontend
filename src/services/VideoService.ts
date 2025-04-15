@@ -27,8 +27,8 @@ export default class VideoService {
             throw new Error("Failed to fetch videos");
         }
         const videosData = await response.json();
-        return videosData.map((videoData: { id: string, title: string, description: string }) => {
-            return new VideoList(videoData.id, videoData.title, videoData.description);
+        return videosData.map((videoData: { id: string, title: string, description: string, thumbnail: string }) => {
+            return new VideoList(videoData.id, videoData.title, videoData.description, videoData.thumbnail);
         });
     }
 
