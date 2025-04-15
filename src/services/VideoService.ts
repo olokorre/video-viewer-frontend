@@ -18,4 +18,15 @@ export default class VideoService {
             }),
         });
     }
+
+    async list(): Promise<Video[]> {
+        const response = await fetch(`${this.api}/videos/list`);
+        if (!response.ok) {
+            throw new Error("Failed to fetch videos");
+        }
+        const videosData = await response.json();
+        return videosData.map((videoData: { title: string, description: string }) => {
+            return new Video(videoData.title, videoData.description);
+        });
+    }
 }
