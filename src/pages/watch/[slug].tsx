@@ -1,27 +1,68 @@
-import PrimaryButton from "@/components/PrimayButton";
+import { useEffect, useRef, useState } from "react";
+import Hls from "hls.js";
 import VideoView from "@/domain/VideoView";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import { videoService } from "../_app";
+import PrimaryButton from "@/components/PrimaryButton";
 import SecondaryButton from "@/components/SecondaryButton";
+import { videoService } from "../_app";
 
 export default function WatchPage() {
   const router = useRouter();
   const { slug: videoId } = router.query;
-
   const [video, setVideo] = useState<VideoView | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     async function fetchVideo() {
-      const video = await videoService.getVideo(videoId as string);
-      setVideo(video);
+      try {
+        const video = await videoService.getVideo(videoId as string);
+        setVideo(video);
+      } catch (err) {
+        setError("Falha ao carregar o vídeo. Tente novamente: " + err);
+      }
     }
     if (videoId) {
       fetchVideo();
     }
   }, [videoId]);
+
+  useEffect(() => {
+    if (!video || !videoRef.current) return;
+
+    const videoElement = videoRef.current;
+    const videoSrc =
+      videoService.api + "/videos/watch/" + video.id + "/content.m3u8";
+
+    // Verifica se o navegador suporta HLS nativamente
+    if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
+      videoElement.src = videoSrc;
+    } else if (Hls.isSupported()) {
+      // Usa HLS.js para navegadores que não suportam HLS nativamente
+      const hls = new Hls();
+      hls.loadSource(videoSrc);
+      hls.attachMedia(videoElement);
+      hls.on(Hls.Events.ERROR, (event, data) => {
+        if (data.fatal) {
+          setError(
+            "Erro ao reproduzir o vídeo. Verifique a conexão ou tente novamente."
+          );
+        }
+      });
+    } else {
+      setError("Seu navegador não suporta reprodução de vídeos HLS.");
+    }
+
+    // Limpeza ao desmontar o componente
+    return () => {
+      if (Hls.isSupported()) {
+        const hls = new Hls();
+        hls.destroy();
+      }
+    };
+  }, [video]);
 
   return (
     <div className="min-h-screen p-4 pb-20 font-[family-name:var(--font-geist-sans)]">
@@ -55,10 +96,14 @@ export default function WatchPage() {
                 {/* Video Player */}
                 <div className="w-full h-64 sm:h-96">
                   <video
+                    ref={videoRef}
                     className="w-full h-full rounded-lg"
                     controls
-                    src={video.videoUrl}
-                  ></video>
+                    autoPlay
+                  />
+                  {error && (
+                    <p className="text-red-500 text-sm mt-2">{error}</p>
+                  )}
                 </div>
                 {/* Video Details */}
                 <div className="mt-4">

@@ -4,20 +4,32 @@ import VideoView from "@/domain/VideoView";
 
 export default class VideoService {
 
-    constructor(private readonly api: string) {
+    constructor(readonly api: string) {
     }
 
-    async upload(video: VideoForm): Promise<void> {
-        await fetch(`${this.api}/videos/upload`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                title: video.name,
-                description: video.description,
-                content: await video.getContent(),
-            }),
+    async upload(video: VideoForm, onProgress?: (progress: number) => void): Promise<void> {
+        const formData = new FormData();
+        formData.append("title", video.name);
+        formData.append("description", video.description);
+        if (video.content) {
+            formData.append("video", video.content);
+        }
+
+        const xhr = new XMLHttpRequest();
+        return new Promise((resolve, reject) => {
+            xhr.upload.onprogress = (event) => {
+                if (event.lengthComputable && onProgress) {
+                    const percent = Math.round((event.loaded / event.total) * 100);
+                    onProgress(percent);
+                }
+            };
+            xhr.onload = () => {
+                if (xhr.status >= 200 && xhr.status < 300) resolve();
+                else reject(new Error(`Failed to upload video: ${xhr.statusText}`));
+            };
+            xhr.onerror = () => reject(new Error("Network error"));
+            xhr.open("POST", `${this.api}/videos/upload`);
+            xhr.send(formData);
         });
     }
 

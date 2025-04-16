@@ -1,3 +1,4 @@
+import { useState } from "react";
 import FileInput from "@/components/FileInput";
 import FormSubmit from "@/components/FormSubmit";
 import TextInput from "@/components/TextInput";
@@ -8,9 +9,16 @@ import { useRouter } from "next/router";
 
 export default function Upload() {
   const router = useRouter();
+  const [uploadProgress, setUploadProgress] = useState<number>(0); // Estado para progresso
+  const [error, setError] = useState<string | null>(null); // Estado para erros
+  const [isUploading, setIsUploading] = useState<boolean>(false); // Estado para desativar botão durante upload
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setError(null);
+    setUploadProgress(0);
+    setIsUploading(true);
+
     try {
       const form = event.currentTarget;
       const name = (form.elements.namedItem("name") as HTMLInputElement).value;
@@ -18,13 +26,25 @@ export default function Upload() {
         form.elements.namedItem("description") as HTMLInputElement
       ).value;
       const fileInput = form.elements.namedItem("content") as HTMLInputElement;
-      const file = fileInput.files?.[0] as File;
+      const file = fileInput.files?.[0];
+
+      if (!file) {
+        throw new Error("Nenhum arquivo selecionado.");
+      }
+
       const video = new VideoForm(name, description, file);
-      await videoService.upload(video);
+
+      await videoService.upload(video, (progress: number) => {
+        setUploadProgress(progress);
+        console.log("Progresso do upload:", progress);
+      });
+
       router.back();
     } catch (error) {
       console.error("Error uploading video:", error);
-      alert("Erro ao enviar o vídeo. Tente novamente.");
+      setError(error?.toString() || "Erro ao enviar o vídeo. Tente novamente.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -65,10 +85,23 @@ export default function Upload() {
             label="Vídeo"
             placeholder="Selecione um vídeo"
             required={true}
-            accept="video/mov,mp4,m4a,3gp,3g2,mj2"
+            accept="video/mov,video/mp4,video/m4a,video/3gp,video/3g2,video/mj2"
           />
           <div className="h-4" />
-          <FormSubmit />
+          {uploadProgress > 0 && uploadProgress < 100 && (
+            <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+              <div
+                className="bg-blue-600 h-2.5 rounded-full"
+                style={{ width: `${uploadProgress}%` }}
+              ></div>
+              <p className="text-sm mt-2">Progresso: {uploadProgress}%</p>
+            </div>
+          )}
+          {error && <p className="text-red-500 text-sm">{error}</p>}
+          <FormSubmit
+            disabled={isUploading}
+            text={isUploading ? "Enviando..." : "Enviar"}
+          />
         </fieldset>
       </form>
     </div>

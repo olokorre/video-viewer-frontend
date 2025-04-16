@@ -1,6 +1,6 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
-import PrimaryButton from "@/components/PrimayButton";
+import PrimaryButton from "@/components/PrimaryButton";
 import { videoService } from "./_app";
 import { useEffect, useState } from "react";
 import VideoList from "@/domain/VideoList";
