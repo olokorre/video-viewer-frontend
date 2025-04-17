@@ -31,16 +31,12 @@ export default function WatchPage() {
 
   useEffect(() => {
     if (!video || !videoRef.current) return;
-
     const videoElement = videoRef.current;
     const videoSrc =
       videoService.api + "/videos/watch/" + video.id + "/content.m3u8";
-
-    // Verifica se o navegador suporta HLS nativamente
     if (videoElement.canPlayType("application/vnd.apple.mpegurl")) {
       videoElement.src = videoSrc;
     } else if (Hls.isSupported()) {
-      // Usa HLS.js para navegadores que não suportam HLS nativamente
       const hls = new Hls();
       hls.loadSource(videoSrc);
       hls.attachMedia(videoElement);
@@ -54,8 +50,6 @@ export default function WatchPage() {
     } else {
       setError("Seu navegador não suporta reprodução de vídeos HLS.");
     }
-
-    // Limpeza ao desmontar o componente
     return () => {
       if (Hls.isSupported()) {
         const hls = new Hls();
@@ -89,11 +83,9 @@ export default function WatchPage() {
       </header>
       <main className="max-w-6xl mx-auto px-4 mt-8">
         <div className="flex flex-col sm:flex-row gap-8">
-          {/* Left Content: Video Player and Details */}
           <div className="flex-1">
             {video ? (
               <>
-                {/* Video Player */}
                 <div className="w-full h-64 sm:h-96">
                   <video
                     ref={videoRef}
@@ -110,8 +102,8 @@ export default function WatchPage() {
                   <h2 className="text-2xl font-bold mb-2">{video.title}</h2>
                   <p className="text-gray-700 mb-4">{video.description}</p>
                   <div className="flex items-center gap-4">
-                    <PrimaryButton text="Like" icon="👍" />
-                    <SecondaryButton text="Dislike" icon="👎" />
+                    <PrimaryButton text="Like" icon="👍" disabled />
+                    <SecondaryButton text="Dislike" icon="👎" disabled />
                   </div>
                 </div>
               </>

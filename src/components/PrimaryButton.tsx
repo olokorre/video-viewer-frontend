@@ -12,7 +12,9 @@ export default function PrimaryButton(props: Props) {
   return (
     <button
       type={props.type}
-      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+      className={`bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400 ${
+        props.disabled ? "opacity-50 cursor-not-allowed" : ""
+      }`}
       onClick={props.onClick}
       disabled={props.disabled}
     >

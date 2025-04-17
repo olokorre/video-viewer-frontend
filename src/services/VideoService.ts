@@ -14,7 +14,6 @@ export default class VideoService {
         if (video.content) {
             formData.append("video", video.content);
         }
-
         const xhr = new XMLHttpRequest();
         return new Promise((resolve, reject) => {
             xhr.upload.onprogress = (event) => {

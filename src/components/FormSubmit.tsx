@@ -19,7 +19,12 @@ export default function FormSubmit({
 
   return (
     <div className="flex justify-end space-x-2">
-      <SecondaryButton text="Cancelar" type="button" onClick={goBack} />
+      <SecondaryButton
+        text="Cancelar"
+        type="button"
+        onClick={goBack}
+        disabled={disabled}
+      />
       <PrimaryButton text={text} type="submit" disabled={disabled} />
     </div>
   );

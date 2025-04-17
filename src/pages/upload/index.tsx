@@ -9,9 +9,9 @@ import { useRouter } from "next/router";
 
 export default function Upload() {
   const router = useRouter();
-  const [uploadProgress, setUploadProgress] = useState<number>(0); // Estado para progresso
-  const [error, setError] = useState<string | null>(null); // Estado para erros
-  const [isUploading, setIsUploading] = useState<boolean>(false); // Estado para desativar botão durante upload
+  const [uploadProgress, setUploadProgress] = useState<number>(0);
+  const [error, setError] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,18 +27,13 @@ export default function Upload() {
       ).value;
       const fileInput = form.elements.namedItem("content") as HTMLInputElement;
       const file = fileInput.files?.[0];
-
       if (!file) {
         throw new Error("Nenhum arquivo selecionado.");
       }
-
       const video = new VideoForm(name, description, file);
-
       await videoService.upload(video, (progress: number) => {
         setUploadProgress(progress);
-        console.log("Progresso do upload:", progress);
       });
-
       router.back();
     } catch (error) {
       console.error("Error uploading video:", error);
@@ -88,19 +83,30 @@ export default function Upload() {
             accept="video/mov,video/mp4,video/m4a,video/3gp,video/3g2,video/mj2"
           />
           <div className="h-4" />
-          {uploadProgress > 0 && uploadProgress < 100 && (
+          {uploadProgress > 0 && (
             <div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
               <div
                 className="bg-blue-600 h-2.5 rounded-full"
                 style={{ width: `${uploadProgress}%` }}
               ></div>
-              <p className="text-sm mt-2">Progresso: {uploadProgress}%</p>
+              <p className="text-sm mt-2">
+                {uploadProgress < 100 && isUploading
+                  ? `Progresso: ${uploadProgress}%`
+                  : "Processando..."}
+              </p>
             </div>
           )}
+          <div className="h-4" />
           {error && <p className="text-red-500 text-sm">{error}</p>}
           <FormSubmit
             disabled={isUploading}
-            text={isUploading ? "Enviando..." : "Enviar"}
+            text={
+              isUploading
+                ? uploadProgress < 100
+                  ? "Enviando..."
+                  : "Processando..."
+                : "Enviar"
+            }
           />
         </fieldset>
       </form>

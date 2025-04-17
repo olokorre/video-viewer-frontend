@@ -2,7 +2,6 @@ export default class VideoForm {
     constructor(readonly name: string, readonly description: string, readonly content?: File) { }
 
     async getContent(): Promise<string> {
-
         return new Promise((resolve, reject) => {
             if (!this.content) {
                 reject(new Error("No content available"));
